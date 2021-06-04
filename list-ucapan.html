@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Ucapan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.js"
+        integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY=" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-analytics.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyDuR9w9hyA_O8wITMUB0Azx9K-p7gg6vdc",
+            authDomain: "wedding-9d89a.firebaseapp.com",
+            projectId: "wedding-9d89a",
+            storageBucket: "wedding-9d89a.appspot.com",
+            messagingSenderId: "68200932798",
+            appId: "1:68200932798:web:bb123776e4ee1d5a88c5ef",
+            measurementId: "G-SV5Z9XMN9K"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+
+        function showData() {
+            const db = firebase.database()
+            const listTamu = db.ref('tamu')
+
+            listTamu.on("child_added", function (data, prevChildKey) {
+                var datas = data.val();
+                $(".list-ucapan").append(
+                    "<div div class='list'>" +
+                    "<div class='row g-0'>" +
+                    "<div class='col-12'>" +
+                    "<button class='btn btn-sm btn-danger' onclick=deleteId(" + data.key + ")>Delete</button>" +
+                    "<h6 class='tamuNama'>" + datas.nama + "</h6>" +
+                    "<small class='tamuTanggal'>" + datas.tgl_kirim + "</small>" +
+                    "<hr style='margin:0px;'>" +
+                    "<p class='tamuUcapan'>" +
+                    datas.ucapan +
+                    "</p>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>"
+                )
+            })
+        }
+        showData()
+
+        function deleteId(id) {
+            const db = firebase.database()
+            Swal.fire({
+                title: 'Apakah anda yakin!',
+                text: "Menghapus ucapan ini ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let userRef = db.ref('tamu/' + id);
+                    userRef.remove()
+                    $(".list-ucapan").html("");
+                    showData()
+                    Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                    )
+                }
+            })
+        }
+
+
+        function handleSuccess(items) {
+            console.log(items.val())
+        }
+
+        function handleError(erro) {
+            console.log(error)
+        }
+    </script>
+    <style>
+        .list-ucapan {
+            padding: 20px;
+        }
+
+        .list {
+            background: #dedede;
+            padding: 20px 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        h6 {
+            margin-bottom: 0px;
+        }
+
+        .tamuTanggal {
+            padding-bottom: 20px;
+        }
+
+        p {
+            margin-top: 10px;
+        }
+
+        button {
+            float: right;
+        }
+    </style>
+</head>
+<div class="row justify-content-center mt-4">
+    <div class="col-12 text-center">
+        <h6>Kartu Ucapan</h6>
+    </div>
+</div>
+<div class="list-ucapan">
+
+</div>
+
+<body>
+
+</body>
+
+</html>
